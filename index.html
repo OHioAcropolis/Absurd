@@ -384,7 +384,7 @@
         .logout-btn { background: none; border: none; color: #dc3545; cursor: pointer; font-weight: bold; text-decoration: underline; padding: 0; }
 
         /* COLA DE REVISIÓN */
-        .admin-panel { margin-top: 40px; background-color: #fff3cd; border: 2px dashed #ffc107; border-radius: 6px; padding: 25px; }
+        .admin-panel { display: none; margin-top: 40px; background-color: #fff3cd; border: 2px dashed #ffc107; border-radius: 6px; padding: 25px; }
         .admin-title { color: #856404; font-size: 1.3rem; font-weight: bold; }
         .pending-card { background-color: #ffffff; border: 1px solid #ffeeba; padding: 15px; margin-top: 15px; border-radius: 4px; }
         .pending-actions { display: flex; gap: 10px; margin-top: 10px; }
@@ -556,7 +556,8 @@
                             </form>
                         </div>
 
-                        <div class="admin-panel">
+                        <!-- PANEL DEL ADMINISTRADOR EXCLUSIVO -->
+                        <div class="admin-panel" id="admin-panel-zone">
                             <div class="admin-title">⚙️ Panel del Administrador (Cola de Revisión)</div>
                             <div id="admin-queue-list">
                                 <p id="no-submissions-text" style="color: #856404; font-style: italic; margin-top: 15px;">No hay récords pendientes.</p>
@@ -576,8 +577,27 @@
         </div>
     </div>
 
-    <script>
-        // BASE DE DATOS ACTUALIZADA CON TU USUARIO DE GD
+    <!-- CONFIGURACIÓN E IMPORTACIÓN DE FIREBASE DESDE LA WEB -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Configuración de tu base de datos absurda
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeGR7Q6Nxq-1d6ZZNRoSkLN8FcwSpWxUc",
+            authDomain: "absurd-d22cf.firebaseapp.com",
+            databaseURL: "https://absurd-d22cf-default-rtdb.firebaseio.com",
+            projectId: "absurd-d22cf",
+            storageBucket: "absurd-d22cf.firebasestorage.app",
+            messagingSenderId: "727200021437",
+            appId: "1:727200021437:web:431224bff72b7cdf8070d4"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Bases de datos locales de respaldo por si acaso
         var levelsDatabase = {
             "poltergeist": {
                 title: "Poltergeist", creator: "Andromeda", id: "1123456", difficulty: "Extreme Demon", 
@@ -593,11 +613,16 @@
 
         var currentActiveTab = 'main'; 
         var currentLeaderboardMode = 'normal';
-        var pendingRecords = [];
         var loggedInUser = null;
+        const ADMIN_USER = "d1amondz57"; // Tu nick en minúsculas para el control de seguridad
+
+        // Escuchar cambios en la cola de revisión de Firebase en tiempo real
+        onValue(ref(db, 'submissions'), (snapshot) => {
+            renderAdminQueue(snapshot.val());
+        });
 
         // --- MANEJO DE DETALLE DE NIVEL ---
-        function viewLevelDetail(levelKey) {
+        window.viewLevelDetail = function(levelKey) {
             var levelData = levelsDatabase[levelKey];
             if (!levelData) return;
 
@@ -637,13 +662,13 @@
             history.pushState({view: 'detail', level: levelKey}, "", "#detail-" + levelKey);
         }
 
-        function closeLevelDetail() {
+        window.closeLevelDetail = function() {
             document.getElementById("level-detail-container").style.display = "none";
             navigateTo(currentActiveTab);
         }
 
         // --- FILTROS ---
-        function toggleFilterMenu() {
+        window.toggleFilterMenu = function() {
             var menu = document.getElementById("filter-menu");
             var btn = document.getElementById("btn-filters");
             if (menu.style.display === "flex") {
@@ -655,7 +680,7 @@
             }
         }
 
-        function applyFilter(method, element) {
+        window.applyFilter = function(method, element) {
             var filterBtns = document.getElementsByClassName("filter-opt-btn");
             for (var i = 0; i < filterBtns.length; i++) filterBtns[i].classList.remove("selected");
             element.classList.add("selected");
@@ -676,7 +701,7 @@
         }
 
         // --- NAVEGACIÓN ---
-        function navigateTo(section) {
+        window.navigateTo = function(section) {
             history.pushState({view: section}, "", "#" + section);
             renderView(section);
         }
@@ -717,7 +742,6 @@
                 }
 
                 if (section === 'leaderboard') updateLeaderboard();
-                if (section === 'submit') renderAdminQueue();
             }
         }
 
@@ -733,57 +757,87 @@
             }
         };
 
-        // --- AUTENTICACIÓN ---
-        function toggleAuthForms(formType) {
+        // --- AUTENTICACIÓN CON FIREBASE ---
+        window.toggleAuthForms = function(formType) {
             document.getElementById("login-box").style.display = formType === 'login' ? 'block' : 'none';
             document.getElementById("register-box").style.display = formType === 'register' ? 'block' : 'none';
         }
 
-        function handleRegister(e) {
+        window.handleRegister = function(e) {
             e.preventDefault();
             var user = document.getElementById("reg-user").value.trim();
             var pass = document.getElementById("reg-pass").value;
-            var usersDB = JSON.parse(localStorage.getItem("gd_users_db")) || {};
+            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, ""); // Limpieza para Firebase
 
-            if (usersDB[user.toLowerCase()]) { alert("Usuario ya registrado."); return; }
-            usersDB[user.toLowerCase()] = { username: user, password: pass };
-            localStorage.setItem("gd_users_db", JSON.stringify(usersDB));
-            alert("¡Cuenta creada!"); toggleAuthForms('login');
+            get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    alert("Este nombre de usuario ya está registrado en la lista.");
+                } else {
+                    set(ref(db, 'users/' + cleanKey), {
+                        username: user,
+                        password: pass
+                    }).then(() => {
+                        alert("¡Cuenta creada exitosamente en la nube!");
+                        toggleAuthForms('login');
+                    });
+                }
+            });
         }
 
-        function handleLogin(e) {
+        window.handleLogin = function(e) {
             e.preventDefault();
             var user = document.getElementById("log-user").value.trim();
             var pass = document.getElementById("log-pass").value;
-            var usersDB = JSON.parse(localStorage.getItem("gd_users_db")) || {};
-            var account = usersDB[user.toLowerCase()];
+            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, "");
 
-            if (account && account.password === pass) {
-                loggedInUser = account.username;
-                checkUserSession();
-            } else { alert("Credenciales incorrectas."); }
+            get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    var account = snapshot.val();
+                    if (account.password === pass) {
+                        loggedInUser = account.username;
+                        checkUserSession();
+                    } else {
+                        alert("Contraseña incorrecta.");
+                    }
+                } else {
+                    alert("El usuario no existe.");
+                }
+            });
         }
 
-        function handleLogout() {
-            loggedInUser = null; checkUserSession(); renderView('submit');
+        window.handleLogout = function() {
+            loggedInUser = null; 
+            checkUserSession(); 
+            renderView('submit');
         }
 
         function checkUserSession() {
             var statusArea = document.getElementById("user-status-area");
             var unlockedZone = document.getElementById("submit-unlocked-zone");
             var lockedZone = document.getElementById("auth-required-zone");
+            var adminZone = document.getElementById("admin-panel-zone");
 
             if (loggedInUser) {
                 statusArea.innerHTML = `<div class="user-badge">👤 ${loggedInUser} | <button class="logout-btn" onclick="handleLogout()">Salir</button></div>`;
-                lockedZone.style.display = "none"; unlockedZone.style.display = "block";
+                lockedZone.style.display = "none"; 
+                unlockedZone.style.display = "block";
                 document.getElementById("sub-nickname").value = loggedInUser;
+
+                // Control de seguridad estricto para D1amondz57
+                if (loggedInUser.toLowerCase() === ADMIN_USER) {
+                    adminZone.style.display = "block";
+                } else {
+                    adminZone.style.display = "none";
+                }
             } else {
                 statusArea.innerHTML = `<span style="font-size: 0.9rem; color: #657786; font-weight: bold;">Demonlist</span>`;
-                lockedZone.style.display = "block"; unlockedZone.style.display = "none";
+                lockedZone.style.display = "block"; 
+                unlockedZone.style.display = "none";
+                adminZone.style.display = "none";
             }
         }
 
-        function changeLeaderboardMode(mode) {
+        window.changeLeaderboardMode = function(mode) {
             currentLeaderboardMode = mode;
             document.getElementById("mode-normal-btn").classList.remove("active");
             document.getElementById("mode-platform-btn").classList.remove("active");
@@ -792,7 +846,7 @@
             updateLeaderboard();
         }
 
-        function updateLeaderboard() {
+        window.updateLeaderboard = function() {
             var methodSelect = document.getElementById("leaderboard-method-select").value;
             var searchQuery = document.getElementById("leaderboard-search-input").value.toLowerCase();
             var listContainer = document.getElementById("leaderboard-players-list");
@@ -807,37 +861,72 @@
             });
         }
 
-        function processFormSubmit(event) {
+        // --- SUBIR UN RÉCORD A LA NUBE ---
+        window.processFormSubmit = function(event) {
             event.preventDefault();
-            pendingRecords.push({
-                id: Date.now(), nickname: loggedInUser,
+            
+            var recordData = {
+                nickname: loggedInUser,
                 levelName: document.getElementById("sub-level").value,
                 controlMethod: document.getElementById("sub-method").value,
                 videoUrl: document.getElementById("sub-video").value,
-                userComment: document.getElementById("sub-comment").value || "Sin comentarios."
+                userComment: document.getElementById("sub-comment").value || "Sin comentarios.",
+                timestamp: Date.now()
+            };
+
+            const submissionsRef = ref(db, 'submissions');
+            const newSubmissionRef = push(submissionsRef);
+            
+            set(newSubmissionRef, recordData).then(() => {
+                alert("¡Récord enviado directamente a la nube! Pendiente de revisión por D1amondz57.");
+                document.getElementById("record-submit-form").reset();
+                document.getElementById("sub-nickname").value = loggedInUser;
+            }).catch((err) => {
+                alert("Error al enviar el récord: " + err.message);
             });
-            alert("Récord enviado."); document.getElementById("record-submit-form").reset();
-            document.getElementById("sub-nickname").value = loggedInUser;
-            renderAdminQueue();
         }
 
-        function renderAdminQueue() {
+        function renderAdminQueue(submissions) {
             var queueContainer = document.getElementById("admin-queue-list");
             var noSubText = document.getElementById("no-submissions-text");
-            if (pendingRecords.length === 0) { noSubText.style.display = "block"; queueContainer.innerHTML = ""; queueContainer.appendChild(noSubText); return; }
-            noSubText.style.display = "none"; queueContainer.innerHTML = "";
-            pendingRecords.forEach(function(rec) {
-                var card = document.createElement("div"); card.className = "pending-card";
-                card.innerHTML = `<div><strong>Jugador:</strong> ${rec.nickname} | <strong>Nivel:</strong> ${rec.levelName}</div><div><button class="action-btn approve-btn" onclick="adminAction(${rec.id})">Aprobar</button></div>`;
+            
+            if (!submissions) { 
+                noSubText.style.display = "block"; 
+                queueContainer.innerHTML = ""; 
+                queueContainer.appendChild(noSubText); 
+                return; 
+            }
+            
+            noSubText.style.display = "none"; 
+            queueContainer.innerHTML = "";
+            
+            Object.keys(submissions).forEach(function(key) {
+                var rec = submissions[key];
+                var card = document.createElement("div"); 
+                card.className = "pending-card";
+                card.innerHTML = `
+                    <div><strong>Jugador:</strong> ${rec.nickname} | <strong>Nivel:</strong> ${rec.levelName}</div>
+                    <div><strong>Método:</strong> ${rec.controlMethod} | <a href="${rec.videoUrl}" target="_blank">Ver Prueba</a></div>
+                    <div style="font-size:0.85rem; color:#666; margin-top:5px;"><em>"${rec.userComment}"</em></div>
+                    <div class="pending-actions">
+                        <button class="action-btn approve-btn" onclick="adminAction('${key}', 'approve')">Aprobar Récord</button>
+                        <button class="action-btn reject-btn" onclick="adminAction('${key}', 'reject')">Rechazar</button>
+                    </div>`;
                 queueContainer.appendChild(card);
             });
         }
 
-        function adminAction(id) {
-            var idx = pendingRecords.findIndex(r => r.id === id);
-            if (idx !== -1) { pendingRecords.splice(idx, 1); renderAdminQueue(); }
+        window.adminAction = function(key, type) {
+            if (type === 'approve') {
+                alert("Récord aprobado de forma simulada. Para añadirlo de forma permanente en las tarjetas de la lista principal, el siguiente paso será armar el panel de administración completo de niveles.");
+            }
+            // Eliminar de la cola de envíos de Firebase
+            remove(ref(db, 'submissions/' + key)).then(() => {
+                alert("Envío procesado.");
+            });
         }
 
+        // Carga Inicial
         window.onload = function() {
             checkUserSession();
             var hash = window.location.hash.replace("#", "");
