@@ -597,10 +597,29 @@
         var loggedInUser = null;
         const ADMIN_USER = "d1amondz57";
 
-        // Escuchar cola de envíos en la nube
-        onValue(ref(db, 'submissions'), (snapshot) => {
-            renderAdminQueue(snapshot.val());
-        });
+        // Variable para guardar la conexión activa a los submits
+        var submissionsListener = null;
+
+        // Función para activar la escucha de submits SOLO si eres el admin
+        function listenToSubmissions() {
+            if (loggedInUser && loggedInUser.toLowerCase() === ADMIN_USER) {
+                // Si ya está escuchando, no duplicar
+                if (submissionsListener) return; 
+                
+                const submissionsRef = ref(db, 'submissions');
+                submissionsListener = onValue(submissionsRef, (snapshot) => {
+                    renderAdminQueue(snapshot.val());
+                });
+            } else {
+                // Si no eres tú, se apaga cualquier intento de lectura en segundo plano
+                if (submissionsListener) {
+                    submissionsListener(); // Remueve el escuchador de Firebase
+                    submissionsListener = null;
+                }
+                var queueContainer = document.getElementById("admin-queue-list");
+                if (queueContainer) queueContainer.innerHTML = "";
+            }
+        }
 
         // --- MANEJO DE DETALLE DE NIVEL ---
         function viewLevelDetail(levelKey) {
@@ -750,6 +769,7 @@
                 unlockedZone.style.display = "none";
                 adminZone.style.display = "none";
             }
+            listenToSubmissions();
         }
 
         function updateLeaderboard() {
