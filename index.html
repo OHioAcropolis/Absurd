@@ -393,7 +393,6 @@
 </head>
 <body>
 
-    <!-- 1. PANTALLA DE BIENVENIDA -->
     <div id="welcome-screen">
         <div class="welcome-top">
             <div class="welcome-intro">
@@ -412,7 +411,6 @@
         </div>
     </div>
 
-    <!-- 2. CONTENIDO PRINCIPAL -->
     <div id="main-content">
         
         <div class="header-pointer">
@@ -422,7 +420,6 @@
             </div>
         </div>
 
-        <!-- Barra de Navegación -->
         <div class="navbar-pointer">
             <button id="btn-main" class="nav-btn active">Main List</button>
             <button id="btn-extended" class="nav-btn">Extended List</button>
@@ -434,7 +431,6 @@
             <button id="btn-filters" class="nav-btn filter-trigger">Filtros ⚙️</button>
         </div>
 
-        <!-- Menú de Filtros Desplegable -->
         <div id="filter-menu" class="filter-dropdown">
             <button class="filter-opt-btn selected" id="filter-all-btn">Todos los métodos</button>
             <button class="filter-opt-btn" id="filter-nariz-btn">Nariz 👃</button>
@@ -446,10 +442,8 @@
 
             <div class="center-content-area">
 
-                <!-- CONTENEDOR DINÁMICO PARA EL DETALLE DEL NIVEL -->
                 <div id="level-detail-container" style="display: none; max-width: 1100px; margin: 0 auto;"></div>
 
-                <!-- MAIN LIST -->
                 <div id="main" class="list-container">
                     <div class="level-card" data-method="nariz" id="card-poltergeist">
                         <div class="level-thumbnail"><img src="https://i.ytimg.com/vi/NgCIEMdeqXE/maxresdefault.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:4px;"></div>
@@ -471,7 +465,6 @@
                     <p style="text-align: left; color:#657786;">No hay niveles en la Platformer List actualmente.</p>
                 </div>
 
-                <!-- LEADERBOARD -->
                 <div id="leaderboard" class="list-container">
                     <h2 class="leaderboard-title">Geometry Dash Absurd List</h2>
                     <div class="leaderboard-controls">
@@ -499,26 +492,21 @@
                     </div>
                 </div>
 
-                <!-- SUBMIT -->
                 <div id="submit" class="list-container">
                     <div id="auth-required-zone">
                         <div class="auth-box" id="login-box" style="display: block;">
                             <h2>🔑 Iniciar Sesión</h2>
-                            <form id="login-form">
-                                <div class="form-group"><label>Nombre de Usuario</label><input type="text" id="log-user" required></div>
-                                <div class="form-group"><label>Contraseña</label><input type="password" id="log-pass" required></div>
-                                <button type="submit" class="submit-btn">Ingresar</button>
-                            </form>
+                            <div class="form-group"><label>Nombre de Usuario</label><input type="text" id="log-user" required></div>
+                            <div class="form-group"><label>Contraseña</label><input type="password" id="log-pass" required></div>
+                            <button type="button" class="submit-btn" id="btn-enviar-login">Ingresar</button>
                             <p style="margin-top:20px; font-size:0.9rem;">¿No tienes cuenta? <span class="auth-toggle-link" id="link-to-register">Regístrate aquí</span></p>
                         </div>
 
-                        <div class="auth-box" id="register-box">
+                        <div class="auth-box" id="register-box" style="display: none;">
                             <h2>📝 Crear Cuenta</h2>
-                            <form id="register-form">
-                                <div class="form-group"><label>Elige tu Nickname</label><input type="text" id="reg-user" required></div>
-                                <div class="form-group"><label>Contraseña</label><input type="password" id="reg-pass" required></div>
-                                <button type="submit" class="submit-btn">Crear Cuenta</button>
-                            </form>
+                            <div class="form-group"><label>Elige tu Nickname</label><input type="text" id="reg-user" required></div>
+                            <div class="form-group"><label>Contraseña</label><input type="password" id="reg-pass" required></div>
+                            <button type="button" class="submit-btn" id="btn-enviar-register">Crear Cuenta</button>
                             <p style="margin-top:20px; font-size:0.9rem;">¿Ya tienes cuenta? <span class="auth-toggle-link" id="link-to-login">Inicia sesión</span></p>
                         </div>
                     </div>
@@ -554,7 +542,6 @@
                             </form>
                         </div>
 
-                        <!-- PANEL DEL ADMINISTRADOR EXCLUSIVO -->
                         <div class="admin-panel" id="admin-panel-zone">
                             <div class="admin-title">⚙️ Panel del Administrador (Cola de Revisión)</div>
                             <div id="admin-queue-list">
@@ -575,7 +562,6 @@
         </div>
     </div>
 
-    <!-- CONFIGURACIÓN E IMPORTACIÓN INTERNA DEFINITIVA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -735,46 +721,6 @@
             document.getElementById("register-box").style.display = formType === 'register' ? 'block' : 'none';
         }
 
-        // --- CONTROL DE LOGIN Y REGISTRO DIRECTO ---
-        document.getElementById("register-form").addEventListener("submit", (e) => {
-            e.preventDefault();
-            var user = document.getElementById("reg-user").value.trim();
-            var pass = document.getElementById("reg-pass").value;
-            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, ""); 
-
-            get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    alert("Este nombre de usuario ya está registrado.");
-                } else {
-                    set(ref(db, 'users/' + cleanKey), { username: user, password: pass }).then(() => {
-                        alert("¡Cuenta creada exitosamente en la nube!");
-                        toggleAuthForms('login');
-                    });
-                }
-            });
-        });
-
-        document.getElementById("login-form").addEventListener("submit", (e) => {
-            e.preventDefault();
-            var user = document.getElementById("log-user").value.trim();
-            var pass = document.getElementById("log-pass").value;
-            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, "");
-
-            get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    var account = snapshot.val();
-                    if (account.password === pass) {
-                        loggedInUser = account.username;
-                        checkUserSession();
-                    } else {
-                        alert("Contraseña incorrecta.");
-                    }
-                } else {
-                    alert("El usuario no existe.");
-                }
-            });
-        });
-
         function checkUserSession() {
             var statusArea = document.getElementById("user-status-area");
             var unlockedZone = document.getElementById("submit-unlocked-zone");
@@ -805,25 +751,6 @@
                 adminZone.style.display = "none";
             }
         }
-
-        // --- SUBMIT DE RÉCORDS ---
-        document.getElementById("record-submit-form").addEventListener("submit", (e) => {
-            e.preventDefault();
-            var recordData = {
-                nickname: loggedInUser,
-                levelName: document.getElementById("sub-level").value,
-                controlMethod: document.getElementById("sub-method").value,
-                videoUrl: document.getElementById("sub-video").value,
-                userComment: document.getElementById("sub-comment").value || "Sin comentarios.",
-                timestamp: Date.now()
-            };
-
-            push(ref(db, 'submissions'), recordData).then(() => {
-                alert("¡Récord enviado a la nube para revisión!");
-                document.getElementById("record-submit-form").reset();
-                document.getElementById("sub-nickname").value = loggedInUser;
-            });
-        });
 
         function updateLeaderboard() {
             var methodSelect = document.getElementById("leaderboard-method-select").value;
@@ -916,6 +843,71 @@
             document.getElementById("mode-normal-btn").classList.remove("active");
             document.getElementById("mode-platform-btn").classList.add("active");
             updateLeaderboard();
+        });
+
+        // --- ENVIAR RÉCORD ---
+        document.getElementById("record-submit-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            var recordData = {
+                nickname: loggedInUser,
+                levelName: document.getElementById("sub-level").value,
+                controlMethod: document.getElementById("sub-method").value,
+                videoUrl: document.getElementById("sub-video").value,
+                userComment: document.getElementById("sub-comment").value || "Sin comentarios.",
+                timestamp: Date.now()
+            };
+
+            push(ref(db, 'submissions'), recordData).then(() => {
+                alert("¡Récord enviado a la nube para revisión!");
+                document.getElementById("record-submit-form").reset();
+                document.getElementById("sub-nickname").value = loggedInUser;
+            });
+        });
+
+        // --- CONTROL DE LOGIN Y REGISTRO DIRECTO ---
+        document.getElementById("btn-enviar-register").addEventListener("click", () => {
+            var user = document.getElementById("reg-user").value.trim();
+            var pass = document.getElementById("reg-pass").value;
+            
+            if(!user || !pass) { alert("Por favor, llena todos los campos."); return; }
+            
+            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, ""); 
+
+            get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    alert("Este nombre de usuario ya está registrado.");
+                } else {
+                    set(ref(db, 'users/' + cleanKey), { username: user, password: pass }).then(() => {
+                        alert("¡Cuenta creada exitosamente en la nube!");
+                        toggleAuthForms('login');
+                    });
+                }
+            }).catch((err) => { alert("Error de conexión: " + err.message); });
+        });
+
+        document.getElementById("btn-enviar-login").addEventListener("click", () => {
+            var user = document.getElementById("log-user").value.trim();
+            var pass = document.getElementById("log-pass").value;
+
+            if(!user || !pass) { alert("Por favor, llena todos los campos."); return; }
+
+            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, "");
+
+            get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    var account = snapshot.val();
+                    if (account.password === pass) {
+                        loggedInUser = account.username;
+                        checkUserSession();
+                        alert("¡Sesión iniciada con éxito!");
+                        navigateTo('main'); // Te redirige automáticamente a la lista al loguearte
+                    } else {
+                        alert("Contraseña incorrecta.");
+                    }
+                } else {
+                    alert("El usuario no existe.");
+                }
+            }).catch((err) => { alert("Error de conexión: " + err.message); });
         });
 
         // Inicio por defecto
