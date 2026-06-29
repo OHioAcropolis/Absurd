@@ -577,7 +577,7 @@
         </div>
     </div>
 
-    <!-- CONFIGURACIÓN E IMPORTACIÓN DE FIREBASE DESDE LA WEB -->
+   <!-- CONFIGURACIÓN E IMPORTACIÓN DE FIREBASE DESDE LA WEB CORREGIDA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -597,7 +597,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Bases de datos locales de respaldo por si acaso
+        // Bases de datos locales de respaldo
         var levelsDatabase = {
             "poltergeist": {
                 title: "Poltergeist", creator: "Andromeda", id: "1123456", difficulty: "Extreme Demon", 
@@ -614,7 +614,7 @@
         var currentActiveTab = 'main'; 
         var currentLeaderboardMode = 'normal';
         var loggedInUser = null;
-        const ADMIN_USER = "d1amondz57"; // Tu nick en minúsculas para el control de seguridad
+        const ADMIN_USER = "d1amondz57"; // Tu nick en minúsculas
 
         // Escuchar cambios en la cola de revisión de Firebase en tiempo real
         onValue(ref(db, 'submissions'), (snapshot) => {
@@ -757,7 +757,7 @@
             }
         };
 
-        // --- AUTENTICACIÓN CON FIREBASE ---
+        // --- AUTENTICACIÓN CON FIREBASE (GLOBALIZADA CON WINDOW) ---
         window.toggleAuthForms = function(formType) {
             document.getElementById("login-box").style.display = formType === 'login' ? 'block' : 'none';
             document.getElementById("register-box").style.display = formType === 'register' ? 'block' : 'none';
@@ -767,7 +767,7 @@
             e.preventDefault();
             var user = document.getElementById("reg-user").value.trim();
             var pass = document.getElementById("reg-pass").value;
-            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, ""); // Limpieza para Firebase
+            var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, ""); 
 
             get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -778,7 +778,7 @@
                         password: pass
                     }).then(() => {
                         alert("¡Cuenta creada exitosamente en la nube!");
-                        toggleAuthForms('login');
+                        window.toggleAuthForms('login');
                     });
                 }
             });
@@ -818,12 +818,11 @@
             var adminZone = document.getElementById("admin-panel-zone");
 
             if (loggedInUser) {
-                statusArea.innerHTML = `<div class="user-badge">👤 ${loggedInUser} | <button class="logout-btn" onclick="handleLogout()">Salir</button></div>`;
+                statusArea.innerHTML = `<div class="user-badge">👤 ${loggedInUser} | <button class="logout-btn" onclick="window.handleLogout()">Salir</button></div>`;
                 lockedZone.style.display = "none"; 
                 unlockedZone.style.display = "block";
                 document.getElementById("sub-nickname").value = loggedInUser;
 
-                // Control de seguridad estricto para D1amondz57
                 if (loggedInUser.toLowerCase() === ADMIN_USER) {
                     adminZone.style.display = "block";
                 } else {
@@ -909,8 +908,8 @@
                     <div><strong>Método:</strong> ${rec.controlMethod} | <a href="${rec.videoUrl}" target="_blank">Ver Prueba</a></div>
                     <div style="font-size:0.85rem; color:#666; margin-top:5px;"><em>"${rec.userComment}"</em></div>
                     <div class="pending-actions">
-                        <button class="action-btn approve-btn" onclick="adminAction('${key}', 'approve')">Aprobar Récord</button>
-                        <button class="action-btn reject-btn" onclick="adminAction('${key}', 'reject')">Rechazar</button>
+                        <button class="action-btn approve-btn" onclick="window.adminAction('${key}', 'approve')">Aprobar Récord</button>
+                        <button class="action-btn reject-btn" onclick="window.adminAction('${key}', 'reject')">Rechazar</button>
                     </div>`;
                 queueContainer.appendChild(card);
             });
@@ -918,21 +917,16 @@
 
         window.adminAction = function(key, type) {
             if (type === 'approve') {
-                alert("Récord aprobado de forma simulada. Para añadirlo de forma permanente en las tarjetas de la lista principal, el siguiente paso será armar el panel de administración completo de niveles.");
+                alert("Récord aprobado de forma simulada.");
             }
-            // Eliminar de la cola de envíos de Firebase
             remove(ref(db, 'submissions/' + key)).then(() => {
                 alert("Envío procesado.");
             });
         }
 
         // Carga Inicial
-        window.onload = function() {
-            checkUserSession();
-            var hash = window.location.hash.replace("#", "");
-            if (hash && document.getElementById(hash)) renderView(hash);
-            else renderView('welcome');
-        };
+        checkUserSession();
+        var hash = window.location.hash.replace("#", "");
+        if (hash && document.getElementById(hash)) renderView(hash);
+        else renderView('welcome');
     </script>
-</body>
-</html>
