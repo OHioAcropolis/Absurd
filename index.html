@@ -295,7 +295,7 @@
             font-weight: bold;
         }
 
-        /* ================= VISTA DETALLADA AMPLIADA Y MEJORADA ================= */
+        /* VISTA DETALLADA */
         .level-detail-view {
             text-align: left;
             width: 100%;
@@ -329,7 +329,6 @@
         }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
-        /* Grid técnico con 3 columnas */
         .technical-info-grid { 
             display: flex; 
             justify-content: space-between; 
@@ -366,7 +365,6 @@
         .flag-box { width: 55px; height: 45px; border: 1px solid #cbd5e0; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f8f9fa; font-weight: bold; font-size: 0.75rem; }
         .player-info { display: flex; flex-direction: column; gap: 4px; }
         .player-name-row { font-size: 1.25rem; font-weight: bold; color: #1a1a1a; margin: 0; }
-        .player-points { font-size: 1rem; color: #657786; margin: 0; }
         .default-cube-icon { width: 45px; height: 45px; border: 2px solid #333333; background-color: #3bf13b; position: relative; }
         .default-cube-icon::before { content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border: 2px solid #333333; background-color: #00bfff; }
 
@@ -404,13 +402,13 @@
                     Esta es la lista definitiva dedicada a recopilar y clasificar los récords más bizarros de la comunidad con métodos de control no convencionales.
                 </p>
             </div>
-            <button class="view-list-btn" onclick="navigateTo('main')">ver La lista</button>
+            <button class="view-list-btn" id="welcome-view-list-btn">ver La lista</button>
         </div>
         <hr class="welcome-divider">
         <div class="welcome-bottom-nav">
-            <button class="sub-btn" onclick="navigateTo('leaderboard')"><span>🏆</span> Leaderboard</button>
-            <button class="sub-btn" onclick="navigateTo('rules')"><span>🔍</span> Rules</button>
-            <button class="sub-btn" onclick="navigateTo('submit')"><span>⬆️</span> Submit</button>
+            <button class="sub-btn" id="welcome-btn-leaderboard"><span>🏆</span> Leaderboard</button>
+            <button class="sub-btn" id="welcome-btn-rules"><span>🔍</span> Rules</button>
+            <button class="sub-btn" id="welcome-btn-submit"><span>⬆️</span> Submit</button>
         </div>
     </div>
 
@@ -426,21 +424,21 @@
 
         <!-- Barra de Navegación -->
         <div class="navbar-pointer">
-            <button id="btn-main" class="nav-btn active" onclick="navigateTo('main')">Main List</button>
-            <button id="btn-extended" class="nav-btn" onclick="navigateTo('extended')">Extended List</button>
-            <button id="btn-legacy" class="nav-btn" onclick="navigateTo('legacy')">Legacy List</button>
-            <button id="btn-platformer" class="nav-btn" onclick="navigateTo('platformer')">Platformer List</button>
-            <button id="btn-leaderboard" class="nav-btn" onclick="navigateTo('leaderboard')">Leaderboard</button>
-            <button id="btn-rules" class="nav-btn" onclick="navigateTo('rules')">Rules</button>
-            <button id="btn-submit" class="nav-btn" onclick="navigateTo('submit')">Submit</button>
-            <button id="btn-filters" class="nav-btn filter-trigger" onclick="toggleFilterMenu()">Filtros ⚙️</button>
+            <button id="btn-main" class="nav-btn active">Main List</button>
+            <button id="btn-extended" class="nav-btn">Extended List</button>
+            <button id="btn-legacy" class="nav-btn">Legacy List</button>
+            <button id="btn-platformer" class="nav-btn">Platformer List</button>
+            <button id="btn-leaderboard" class="nav-btn">Leaderboard</button>
+            <button id="btn-rules" class="nav-btn">Rules</button>
+            <button id="btn-submit" class="nav-btn">Submit</button>
+            <button id="btn-filters" class="nav-btn filter-trigger">Filtros ⚙️</button>
         </div>
 
         <!-- Menú de Filtros Desplegable -->
         <div id="filter-menu" class="filter-dropdown">
-            <button class="filter-opt-btn selected" onclick="applyFilter('all', this)">Todos los métodos</button>
-            <button class="filter-opt-btn" onclick="applyFilter('nariz', this)">Nariz 👃</button>
-            <button class="filter-opt-btn" onclick="applyFilter('pies', this)">Pies 🦶</button>
+            <button class="filter-opt-btn selected" id="filter-all-btn">Todos los métodos</button>
+            <button class="filter-opt-btn" id="filter-nariz-btn">Nariz 👃</button>
+            <button class="filter-opt-btn" id="filter-pies-btn">Pies 🦶</button>
         </div>
 
         <div class="pointer-body-layout">
@@ -453,7 +451,7 @@
 
                 <!-- MAIN LIST -->
                 <div id="main" class="list-container">
-                    <div class="level-card" data-method="nariz" data-global-pos="1" onclick="viewLevelDetail('poltergeist')">
+                    <div class="level-card" data-method="nariz" id="card-poltergeist">
                         <div class="level-thumbnail"><img src="https://i.ytimg.com/vi/NgCIEMdeqXE/maxresdefault.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:4px;"></div>
                         <div class="level-content">
                             <p class="level-title-row"><span class="pos-num">#1</span> - Poltergeist</p>
@@ -479,16 +477,16 @@
                     <div class="leaderboard-controls">
                         <div class="method-selector-box">
                             <span>∨</span>
-                            <select id="leaderboard-method-select" class="method-select" onchange="updateLeaderboard()">
+                            <select id="leaderboard-method-select" class="method-select">
                                 <option value="nariz">Nariz 👃</option>
                                 <option value="pies">Pies 🦶</option>
                             </select>
                             <span>Leaderboard</span>
                         </div>
-                        <input type="text" id="leaderboard-search-input" class="leaderboard-search" placeholder="Buscar jugador..." oninput="updateLeaderboard()">
+                        <input type="text" id="leaderboard-search-input" class="leaderboard-search" placeholder="Buscar jugador...">
                         <div class="mode-toggle-container">
-                            <button id="mode-normal-btn" class="mode-toggle-btn active" onclick="changeLeaderboardMode('normal')">Normal</button>
-                            <button id="mode-platform-btn" class="mode-toggle-btn" onclick="changeLeaderboardMode('platform')">plataform</button>
+                            <button id="mode-normal-btn" class="mode-toggle-btn active">Normal</button>
+                            <button id="mode-platform-btn" class="mode-toggle-btn">plataform</button>
                         </div>
                     </div>
                     <div id="leaderboard-players-list"></div>
@@ -506,29 +504,29 @@
                     <div id="auth-required-zone">
                         <div class="auth-box" id="login-box" style="display: block;">
                             <h2>🔑 Iniciar Sesión</h2>
-                            <form onsubmit="handleLogin(event)">
+                            <form id="login-form">
                                 <div class="form-group"><label>Nombre de Usuario</label><input type="text" id="log-user" required></div>
                                 <div class="form-group"><label>Contraseña</label><input type="password" id="log-pass" required></div>
                                 <button type="submit" class="submit-btn">Ingresar</button>
                             </form>
-                            <p style="margin-top:20px; font-size:0.9rem;">¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthForms('register')">Regístrate aquí</span></p>
+                            <p style="margin-top:20px; font-size:0.9rem;">¿No tienes cuenta? <span class="auth-toggle-link" id="link-to-register">Regístrate aquí</span></p>
                         </div>
 
                         <div class="auth-box" id="register-box">
                             <h2>📝 Crear Cuenta</h2>
-                            <form onsubmit="handleRegister(event)">
+                            <form id="register-form">
                                 <div class="form-group"><label>Elige tu Nickname</label><input type="text" id="reg-user" required></div>
                                 <div class="form-group"><label>Contraseña</label><input type="password" id="reg-pass" required></div>
                                 <button type="submit" class="submit-btn">Crear Cuenta</button>
                             </form>
-                            <p style="margin-top:20px; font-size:0.9rem;">¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthForms('login')">Inicia sesión</span></p>
+                            <p style="margin-top:20px; font-size:0.9rem;">¿Ya tienes cuenta? <span class="auth-toggle-link" id="link-to-login">Inicia sesión</span></p>
                         </div>
                     </div>
 
                     <div id="submit-unlocked-zone" style="display: none;">
                         <div class="info-box">
                             <h2>⬆️ Enviar un Récord</h2>
-                            <form id="record-submit-form" onsubmit="processFormSubmit(event)">
+                            <form id="record-submit-form">
                                 <div class="form-group">
                                     <label>Nickname del Jugador</label>
                                     <input type="text" id="sub-nickname" readonly style="background-color: #e2e8f0; font-weight: bold;">
@@ -577,12 +575,11 @@
         </div>
     </div>
 
-   <!-- CONFIGURACIÓN E IMPORTACIÓN DE FIREBASE DESDE LA WEB CORREGIDA -->
+    <!-- CONFIGURACIÓN E IMPORTACIÓN INTERNA DEFINITIVA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // Configuración de tu base de datos absurda
         const firebaseConfig = {
             apiKey: "AIzaSyCeGR7Q6Nxq-1d6ZZNRoSkLN8FcwSpWxUc",
             authDomain: "absurd-d22cf.firebaseapp.com",
@@ -593,11 +590,9 @@
             appId: "1:727200021437:web:431224bff72b7cdf8070d4"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Bases de datos locales de respaldo
         var levelsDatabase = {
             "poltergeist": {
                 title: "Poltergeist", creator: "Andromeda", id: "1123456", difficulty: "Extreme Demon", 
@@ -614,15 +609,15 @@
         var currentActiveTab = 'main'; 
         var currentLeaderboardMode = 'normal';
         var loggedInUser = null;
-        const ADMIN_USER = "d1amondz57"; // Tu nick en minúsculas
+        const ADMIN_USER = "d1amondz57";
 
-        // Escuchar cambios en la cola de revisión de Firebase en tiempo real
+        // Escuchar cola de envíos en la nube
         onValue(ref(db, 'submissions'), (snapshot) => {
             renderAdminQueue(snapshot.val());
         });
 
         // --- MANEJO DE DETALLE DE NIVEL ---
-        window.viewLevelDetail = function(levelKey) {
+        function viewLevelDetail(levelKey) {
             var levelData = levelsDatabase[levelKey];
             if (!levelData) return;
 
@@ -637,7 +632,7 @@
 
             detailContainer.innerHTML = `
                 <div class="level-detail-view">
-                    <button class="back-btn" onclick="closeLevelDetail()">← Volver a la Lista</button>
+                    <button class="back-btn" id="back-to-list-btn">← Volver a la Lista</button>
                     <div class="detail-header">
                         <h2 class="detail-title">${levelData.title}</h2>
                         <p class="detail-author">by: <strong>${levelData.creator}</strong></p>
@@ -659,16 +654,15 @@
                 </div>
             `;
             detailContainer.style.display = "block";
-            history.pushState({view: 'detail', level: levelKey}, "", "#detail-" + levelKey);
-        }
 
-        window.closeLevelDetail = function() {
-            document.getElementById("level-detail-container").style.display = "none";
-            navigateTo(currentActiveTab);
+            document.getElementById("back-to-list-btn").addEventListener("click", () => {
+                detailContainer.style.display = "none";
+                navigateTo(currentActiveTab);
+            });
         }
 
         // --- FILTROS ---
-        window.toggleFilterMenu = function() {
+        function toggleFilterMenu() {
             var menu = document.getElementById("filter-menu");
             var btn = document.getElementById("btn-filters");
             if (menu.style.display === "flex") {
@@ -680,10 +674,10 @@
             }
         }
 
-        window.applyFilter = function(method, element) {
+        function applyFilter(method, buttonId) {
             var filterBtns = document.getElementsByClassName("filter-opt-btn");
             for (var i = 0; i < filterBtns.length; i++) filterBtns[i].classList.remove("selected");
-            element.classList.add("selected");
+            document.getElementById(buttonId).classList.add("selected");
 
             var activeList = document.getElementById(currentActiveTab);
             if (!activeList) return;
@@ -701,12 +695,7 @@
         }
 
         // --- NAVEGACIÓN ---
-        window.navigateTo = function(section) {
-            history.pushState({view: section}, "", "#" + section);
-            renderView(section);
-        }
-
-        function renderView(section) {
+        function navigateTo(section) {
             var welcome = document.getElementById("welcome-screen");
             var mainContent = document.getElementById("main-content");
             var detailContainer = document.getElementById("level-detail-container");
@@ -728,42 +717,26 @@
                 var buttons = document.getElementsByClassName("nav-btn");
                 for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
 
-                if (section === 'detail') {
-                    detailContainer.style.display = "block";
-                } else {
-                    detailContainer.style.display = "none";
-                    var targetList = document.getElementById(section);
-                    if (targetList) {
-                        targetList.style.display = "block";
-                        currentActiveTab = section;
-                    }
-                    var currentBtn = document.getElementById("btn-" + section);
-                    if (currentBtn) currentBtn.classList.add("active");
+                detailContainer.style.display = "none";
+                var targetList = document.getElementById(section);
+                if (targetList) {
+                    targetList.style.display = "block";
+                    currentActiveTab = section;
                 }
+                var currentBtn = document.getElementById("btn-" + section);
+                if (currentBtn) currentBtn.classList.add("active");
 
                 if (section === 'leaderboard') updateLeaderboard();
             }
         }
 
-        window.onpopstate = function(event) {
-            if (event.state) {
-                if (event.state.view === 'detail') {
-                    viewLevelDetail(event.state.level);
-                } else {
-                    renderView(event.state.view);
-                }
-            } else {
-                renderView('welcome');
-            }
-        };
-
-        // --- AUTENTICACIÓN CON FIREBASE (GLOBALIZADA CON WINDOW) ---
-        window.toggleAuthForms = function(formType) {
+        function toggleAuthForms(formType) {
             document.getElementById("login-box").style.display = formType === 'login' ? 'block' : 'none';
             document.getElementById("register-box").style.display = formType === 'register' ? 'block' : 'none';
         }
 
-        window.handleRegister = function(e) {
+        // --- CONTROL DE LOGIN Y REGISTRO DIRECTO ---
+        document.getElementById("register-form").addEventListener("submit", (e) => {
             e.preventDefault();
             var user = document.getElementById("reg-user").value.trim();
             var pass = document.getElementById("reg-pass").value;
@@ -771,20 +744,17 @@
 
             get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
                 if (snapshot.exists()) {
-                    alert("Este nombre de usuario ya está registrado en la lista.");
+                    alert("Este nombre de usuario ya está registrado.");
                 } else {
-                    set(ref(db, 'users/' + cleanKey), {
-                        username: user,
-                        password: pass
-                    }).then(() => {
+                    set(ref(db, 'users/' + cleanKey), { username: user, password: pass }).then(() => {
                         alert("¡Cuenta creada exitosamente en la nube!");
-                        window.toggleAuthForms('login');
+                        toggleAuthForms('login');
                     });
                 }
             });
-        }
+        });
 
-        window.handleLogin = function(e) {
+        document.getElementById("login-form").addEventListener("submit", (e) => {
             e.preventDefault();
             var user = document.getElementById("log-user").value.trim();
             var pass = document.getElementById("log-pass").value;
@@ -803,13 +773,7 @@
                     alert("El usuario no existe.");
                 }
             });
-        }
-
-        window.handleLogout = function() {
-            loggedInUser = null; 
-            checkUserSession(); 
-            renderView('submit');
-        }
+        });
 
         function checkUserSession() {
             var statusArea = document.getElementById("user-status-area");
@@ -818,7 +782,7 @@
             var adminZone = document.getElementById("admin-panel-zone");
 
             if (loggedInUser) {
-                statusArea.innerHTML = `<div class="user-badge">👤 ${loggedInUser} | <button class="logout-btn" onclick="window.handleLogout()">Salir</button></div>`;
+                statusArea.innerHTML = `<div class="user-badge">👤 ${loggedInUser} | <button class="logout-btn" id="btn-logout-act">Salir</button></div>`;
                 lockedZone.style.display = "none"; 
                 unlockedZone.style.display = "block";
                 document.getElementById("sub-nickname").value = loggedInUser;
@@ -828,6 +792,12 @@
                 } else {
                     adminZone.style.display = "none";
                 }
+
+                document.getElementById("btn-logout-act").addEventListener("click", () => {
+                    loggedInUser = null;
+                    checkUserSession();
+                    navigateTo('submit');
+                });
             } else {
                 statusArea.innerHTML = `<span style="font-size: 0.9rem; color: #657786; font-weight: bold;">Demonlist</span>`;
                 lockedZone.style.display = "block"; 
@@ -836,16 +806,26 @@
             }
         }
 
-        window.changeLeaderboardMode = function(mode) {
-            currentLeaderboardMode = mode;
-            document.getElementById("mode-normal-btn").classList.remove("active");
-            document.getElementById("mode-platform-btn").classList.remove("active");
-            if(mode === 'normal') document.getElementById("mode-normal-btn").classList.add("active");
-            else document.getElementById("mode-platform-btn").classList.add("active");
-            updateLeaderboard();
-        }
+        // --- SUBMIT DE RÉCORDS ---
+        document.getElementById("record-submit-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            var recordData = {
+                nickname: loggedInUser,
+                levelName: document.getElementById("sub-level").value,
+                controlMethod: document.getElementById("sub-method").value,
+                videoUrl: document.getElementById("sub-video").value,
+                userComment: document.getElementById("sub-comment").value || "Sin comentarios.",
+                timestamp: Date.now()
+            };
 
-        window.updateLeaderboard = function() {
+            push(ref(db, 'submissions'), recordData).then(() => {
+                alert("¡Récord enviado a la nube para revisión!");
+                document.getElementById("record-submit-form").reset();
+                document.getElementById("sub-nickname").value = loggedInUser;
+            });
+        });
+
+        function updateLeaderboard() {
             var methodSelect = document.getElementById("leaderboard-method-select").value;
             var searchQuery = document.getElementById("leaderboard-search-input").value.toLowerCase();
             var listContainer = document.getElementById("leaderboard-players-list");
@@ -857,31 +837,6 @@
             if(filtered.length === 0) { listContainer.innerHTML = "<p>No hay jugadores.</p>"; return; }
             filtered.forEach(function(player, index) {
                 listContainer.innerHTML += `<div class="player-card"><div class="player-left-section"><div class="flag-box"><span>${player.flag}</span></div><div class="player-info"><p class="player-name-row">${index+1}. ${player.name}</p></div></div><div class="player-right-section"><div class="default-cube-icon"></div></div></div>`;
-            });
-        }
-
-        // --- SUBIR UN RÉCORD A LA NUBE ---
-        window.processFormSubmit = function(event) {
-            event.preventDefault();
-            
-            var recordData = {
-                nickname: loggedInUser,
-                levelName: document.getElementById("sub-level").value,
-                controlMethod: document.getElementById("sub-method").value,
-                videoUrl: document.getElementById("sub-video").value,
-                userComment: document.getElementById("sub-comment").value || "Sin comentarios.",
-                timestamp: Date.now()
-            };
-
-            const submissionsRef = ref(db, 'submissions');
-            const newSubmissionRef = push(submissionsRef);
-            
-            set(newSubmissionRef, recordData).then(() => {
-                alert("¡Récord enviado directamente a la nube! Pendiente de revisión por D1amondz57.");
-                document.getElementById("record-submit-form").reset();
-                document.getElementById("sub-nickname").value = loggedInUser;
-            }).catch((err) => {
-                alert("Error al enviar el récord: " + err.message);
             });
         }
 
@@ -908,25 +863,64 @@
                     <div><strong>Método:</strong> ${rec.controlMethod} | <a href="${rec.videoUrl}" target="_blank">Ver Prueba</a></div>
                     <div style="font-size:0.85rem; color:#666; margin-top:5px;"><em>"${rec.userComment}"</em></div>
                     <div class="pending-actions">
-                        <button class="action-btn approve-btn" onclick="window.adminAction('${key}', 'approve')">Aprobar Récord</button>
-                        <button class="action-btn reject-btn" onclick="window.adminAction('${key}', 'reject')">Rechazar</button>
+                        <button class="action-btn approve-btn" id="app-${key}">Aprobar</button>
+                        <button class="action-btn reject-btn" id="rej-${key}">Rechazar</button>
                     </div>`;
                 queueContainer.appendChild(card);
+
+                document.getElementById(`app-${key}`).addEventListener("click", () => {
+                    alert("Aprobado de forma simulada.");
+                    remove(ref(db, 'submissions/' + key));
+                });
+                document.getElementById(`rej-${key}`).addEventListener("click", () => {
+                    remove(ref(db, 'submissions/' + key));
+                });
             });
         }
 
-        window.adminAction = function(key, type) {
-            if (type === 'approve') {
-                alert("Récord aprobado de forma simulada.");
-            }
-            remove(ref(db, 'submissions/' + key)).then(() => {
-                alert("Envío procesado.");
-            });
-        }
+        // --- ASIGNACIÓN DE ESCUCHADORES DE BOTONES ---
+        document.getElementById("welcome-view-list-btn").addEventListener("click", () => navigateTo('main'));
+        document.getElementById("welcome-btn-leaderboard").addEventListener("click", () => navigateTo('leaderboard'));
+        document.getElementById("welcome-btn-rules").addEventListener("click", () => navigateTo('rules'));
+        document.getElementById("welcome-btn-submit").addEventListener("click", () => navigateTo('submit'));
 
-        // Carga Inicial
+        document.getElementById("btn-main").addEventListener("click", () => navigateTo('main'));
+        document.getElementById("btn-extended").addEventListener("click", () => navigateTo('extended'));
+        document.getElementById("btn-legacy").addEventListener("click", () => navigateTo('legacy'));
+        document.getElementById("btn-platformer").addEventListener("click", () => navigateTo('platformer'));
+        document.getElementById("btn-leaderboard").addEventListener("click", () => navigateTo('leaderboard'));
+        document.getElementById("btn-rules").addEventListener("click", () => navigateTo('rules'));
+        document.getElementById("btn-submit").addEventListener("click", () => navigateTo('submit'));
+        document.getElementById("btn-filters").addEventListener("click", () => toggleFilterMenu());
+
+        document.getElementById("filter-all-btn").addEventListener("click", () => applyFilter('all', 'filter-all-btn'));
+        document.getElementById("filter-nariz-btn").addEventListener("click", () => applyFilter('nariz', 'filter-nariz-btn'));
+        document.getElementById("filter-pies-btn").addEventListener("click", () => applyFilter('pies', 'filter-pies-btn'));
+
+        document.getElementById("link-to-register").addEventListener("click", () => toggleAuthForms('register'));
+        document.getElementById("link-to-login").addEventListener("click", () => toggleAuthForms('login'));
+
+        document.getElementById("card-poltergeist").addEventListener("click", () => viewLevelDetail('poltergeist'));
+
+        document.getElementById("leaderboard-method-select").addEventListener("change", updateLeaderboard);
+        document.getElementById("leaderboard-search-input").addEventListener("input", updateLeaderboard);
+        
+        document.getElementById("mode-normal-btn").addEventListener("click", () => {
+            currentLeaderboardMode = 'normal';
+            document.getElementById("mode-normal-btn").classList.add("active");
+            document.getElementById("mode-platform-btn").classList.remove("active");
+            updateLeaderboard();
+        });
+        document.getElementById("mode-platform-btn").addEventListener("click", () => {
+            currentLeaderboardMode = 'platform';
+            document.getElementById("mode-normal-btn").classList.remove("active");
+            document.getElementById("mode-platform-btn").classList.add("active");
+            updateLeaderboard();
+        });
+
+        // Inicio por defecto
         checkUserSession();
-        var hash = window.location.hash.replace("#", "");
-        if (hash && document.getElementById(hash)) renderView(hash);
-        else renderView('welcome');
+        navigateTo('welcome');
     </script>
+</body>
+</html>
