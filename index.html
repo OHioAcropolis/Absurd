@@ -645,7 +645,6 @@
         });
 
         // --- RENDERIZAR MAIN LIST DINÁMICAMENTE ---
-       // --- RENDERIZAR MAIN LIST DINÁMICAMENTE ---
         function renderMainList() {
             var container = document.getElementById("main-levels-list");
             container.innerHTML = "";
@@ -659,10 +658,12 @@
             keys.forEach((key, index) => {
                 var lvl = levelsDatabase[key];
                 var videoId = lvl.youtubeId || "NgCIEMdeqXE";
-                // Usamos el método del primer registro para el filtro
-                var cleanMethod = lvl.records && lvl.records[0] && lvl.records[0].method.toLowerCase().includes("nariz") ? "nariz" : "pies";
                 
-                // Puntos dinámicos desde la base de datos
+                var cleanMethod = "nariz";
+                if (lvl.records && lvl.records[0] && lvl.records[0].method) {
+                    cleanMethod = lvl.records[0].method.toLowerCase().includes("nariz") ? "nariz" : "pies";
+                }
+                
                 var puntosNivel = lvl.points || "350.00"; 
 
                 var card = document.createElement("div");
@@ -675,7 +676,7 @@
                     </div>
                     <div class="level-content">
                         <p class="level-title-row"><span class="pos-num">#${index + 1}</span> - ${lvl.title}</p>
-                        <p class="level-meta-text">Último récord por: <strong>${lvl.records[lvl.records.length - 1].name}</strong></p>
+                        <p class="level-meta-text">Último récord por: <strong>${lvl.records && lvl.records.length > 0 ? lvl.records[lvl.records.length - 1].name : "Desconocido"}</strong></p>
                         <p class="level-points-crate">${puntosNivel} points</p>
                     </div>
                 `;
@@ -686,10 +687,16 @@
         }
 
             keys.forEach((key, index) => {
-                var lvl = levelsDatabase[key];
-                // Extraer el ID de video para la miniatura
+             var lvl = levelsDatabase[key];
                 var videoId = lvl.youtubeId || "NgCIEMdeqXE";
-                var cleanMethod = lvl.records[0].method.toLowerCase().includes("nariz") ? "nariz" : "pies";
+                
+                // Validación por si acaso un nivel se aprueba sin récords
+                var cleanMethod = "nariz";
+                if (lvl.records && lvl.records[0] && lvl.records[0].method) {
+                    cleanMethod = lvl.records[0].method.toLowerCase().includes("nariz") ? "nariz" : "pies";
+                }
+
+                var puntosNivel = lvl.points || "350.00"; 
 
                 var card = document.createElement("div");
                 card.className = "level-card";
@@ -701,15 +708,15 @@
                     </div>
                     <div class="level-content">
                         <p class="level-title-row"><span class="pos-num">#${index + 1}</span> - ${lvl.title}</p>
-                        <p class="level-meta-text">Completado por: <strong>${lvl.records[0].name}</strong> con ${lvl.records[0].method}</p>
-                        <p class="level-points-crate">350.00 points</p>
+                        <p class="level-meta-text">Último récord por: <strong>${lvl.records && lvl.records.length > 0 ? lvl.records[lvl.records.length - 1].name : "Desconocido"}</strong></p>
+                        <p class="level-points-crate">${puntosNivel} points</p>
                     </div>
                 `;
                 
                 card.addEventListener("click", () => viewLevelDetail(key));
                 container.appendChild(card);
             });
-
+        
         // --- MANEJO DE DETALLE DE NIVEL ---
         function viewLevelDetail(levelKey) {
             var levelData = levelsDatabase[levelKey];
