@@ -875,7 +875,7 @@
                     </div>`;
                 queueContainer.appendChild(card);
 
-                // ACCIÓN REAL DE APROBACIÓN EN LA NUBE
+                // ACCIÓN REAL DE APROBACIÓN EN LA NUBE (CORREGIDA)
                 document.getElementById(`app-${key}`).addEventListener("click", () => {
                     var cleanLvlKey = rec.levelName.toLowerCase().replace(/[.#$\[\]]/g, "").trim();
                     var ytId = getYoutubeId(rec.videoUrl);
@@ -897,14 +897,13 @@
 
                     // Guardar en la sección pública y remover de la cola simultáneamente
                     set(ref(db, 'public_levels/' + cleanLvlKey), newPublicLevel).then(() => {
-                        remove(ref(db, 'submissions/' + key));
+                        return remove(ref(db, 'submissions/' + key));
+                    }).then(() => {
                         alert(`¡${rec.levelName} aprobado y publicado con éxito!`);
+                    }).catch((error) => {
+                        // Esto te avisará en pantalla si Firebase rechaza la escritura
+                        alert("Error al aprobar: " + error.message);
                     });
-                });
-
-                document.getElementById(`rej-${key}`).addEventListener("click", () => {
-                    remove(ref(db, 'submissions/' + key));
-                    alert("Récord rechazado y eliminado de la cola.");
                 });
             });
         }
