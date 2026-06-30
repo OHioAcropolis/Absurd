@@ -393,7 +393,6 @@
 </head>
 <body>
 
-    <!-- 1. PANTALLA DE BIENVENIDA -->
     <div id="welcome-screen">
         <div class="welcome-top">
             <div class="welcome-intro">
@@ -412,7 +411,6 @@
         </div>
     </div>
 
-    <!-- 2. CONTENIDO PRINCIPAL -->
     <div id="main-content">
         
         <div class="header-pointer">
@@ -422,7 +420,6 @@
             </div>
         </div>
 
-        <!-- Barra de Navegación -->
         <div class="navbar-pointer">
             <button id="btn-main" class="nav-btn active">Main List</button>
             <button id="btn-extended" class="nav-btn">Extended List</button>
@@ -434,7 +431,6 @@
             <button id="btn-filters" class="nav-btn filter-trigger">Filtros ⚙️</button>
         </div>
 
-        <!-- Menú de Filtros Desplegable -->
         <div id="filter-menu" class="filter-dropdown">
             <button class="filter-opt-btn selected" id="filter-all-btn">Todos los métodos</button>
             <button class="filter-opt-btn" id="filter-nariz-btn">Nariz 👃</button>
@@ -446,14 +442,11 @@
 
             <div class="center-content-area">
 
-                <!-- CONTENEDOR DINÁMICO PARA EL DETALLE DEL NIVEL -->
                 <div id="level-detail-container" style="display: none; max-width: 1100px; margin: 0 auto;"></div>
 
-                <!-- MAIN LIST (DINÁMICA DESDE FIREBASE) -->
                 <div id="main" class="list-container">
                     <div id="main-levels-list">
-                        <!-- Los niveles cargados dinámicamente desde la nube aparecerán aquí -->
-                    </div>
+                        </div>
                 </div>
 
                 <div id="extended" class="list-container">
@@ -466,7 +459,6 @@
                     <p style="text-align: left; color:#657786;">No hay niveles en la Platformer List actualmente.</p>
                 </div>
 
-                <!-- LEADERBOARD -->
                 <div id="leaderboard" class="list-container">
                     <h2 class="leaderboard-title">Geometry Dash Absurd List</h2>
                     <div class="leaderboard-controls">
@@ -494,7 +486,6 @@
                     </div>
                 </div>
 
-                <!-- SUBMIT -->
                 <div id="submit" class="list-container">
                     <div id="auth-required-zone">
                         <div class="auth-box" id="login-box" style="display: block;">
@@ -557,40 +548,39 @@
                             </form>
                         </div>
 
-                        <!-- PANEL DEL ADMINISTRADOR EXCLUSIVO -->
                         <div class="admin-panel" id="admin-panel-zone">
-                            <!-- MODAL DE CONFIGURACIÓN DE PUNTOS Y REQUISITOS (SOLO ADMIN) -->
-<div id="admin-approve-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center;">
-    <div style="background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 450px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); text-align: left;">
-        <h3 style="margin-top: 0; color: #2b2b2b; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">⚙️ Configurar Publicación</h3>
-        
-        <input type="hidden" id="modal-submit-key">
-        
-        <div class="form-group">
-            <label>Puntos que otorga el nivel (Ej: 350.00)</label>
-            <input type="text" id="modal-level-points" value="350.00">
-        </div>
-        
-        <div class="form-group">
-            <label>Porcentaje mínimo requerido (Ej: 100% o 64%)</label>
-            <input type="text" id="modal-level-req" value="100%">
-        </div>
-
-        <div class="form-group">
-            <label>Porcentaje logrado por el jugador</label>
-            <input type="text" id="modal-player-score" value="100%">
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-top: 25px;">
-            <button id="modal-btn-confirm" class="submit-btn" style="background-color: #28a745; flex: 1;">Publicar Récord</button>
-            <button id="modal-btn-cancel" class="submit-btn" style="background-color: #657786; flex: 1;">Cancelar</button>
-        </div>
-    </div>
-</div>
                             <div class="admin-title">⚙️ Panel del Administrador (Cola de Revisión)</div>
                             <div id="admin-queue-list">
                                 <p id="no-submissions-text" style="color: #856404; font-style: italic; margin-top: 15px;">No hay récords pendientes.</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-approve-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 450px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); text-align: left;">
+                        <h3 style="margin-top: 0; color: #2b2b2b; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">⚙️ Configurar Publicación</h3>
+                        
+                        <input type="hidden" id="modal-submit-key">
+                        
+                        <div class="form-group">
+                            <label>Puntos que otorga el nivel (Ej: 350.00)</label>
+                            <input type="text" id="modal-level-points" value="350.00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Porcentaje mínimo requerido (Ej: 100% o 64%)</label>
+                            <input type="text" id="modal-level-req" value="100%">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Porcentaje logrado por el jugador</label>
+                            <input type="text" id="modal-player-score" value="100%">
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 25px;">
+                            <button id="modal-btn-confirm" class="submit-btn" style="background-color: #28a745; flex: 1;">Publicar Récord</button>
+                            <button id="modal-btn-cancel" class="submit-btn" style="background-color: #657786; flex: 1;">Cancelar</button>
                         </div>
                     </div>
                 </div>
@@ -606,7 +596,6 @@
         </div>
     </div>
 
-    <!-- CONFIGURACIÓN E IMPORTACIÓN INTERNA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -637,6 +626,7 @@
         var loggedInUser = null;
         const ADMIN_USER = "d1amondz57";
         var submissionsListener = null;
+        var activeSubmissionData = null;
 
         // --- ESCUCHAR NIVELES PÚBLICOS EN LA NUBE ---
         onValue(ref(db, 'public_levels'), (snapshot) => {
@@ -686,37 +676,6 @@
             });
         }
 
-            keys.forEach((key, index) => {
-             var lvl = levelsDatabase[key];
-                var videoId = lvl.youtubeId || "NgCIEMdeqXE";
-                
-                // Validación por si acaso un nivel se aprueba sin récords
-                var cleanMethod = "nariz";
-                if (lvl.records && lvl.records[0] && lvl.records[0].method) {
-                    cleanMethod = lvl.records[0].method.toLowerCase().includes("nariz") ? "nariz" : "pies";
-                }
-
-                var puntosNivel = lvl.points || "350.00"; 
-
-                var card = document.createElement("div");
-                card.className = "level-card";
-                card.setAttribute("data-method", cleanMethod);
-                card.id = `card-${key}`;
-                card.innerHTML = `
-                    <div class="level-thumbnail">
-                        <img src="https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">
-                    </div>
-                    <div class="level-content">
-                        <p class="level-title-row"><span class="pos-num">#${index + 1}</span> - ${lvl.title}</p>
-                        <p class="level-meta-text">Último récord por: <strong>${lvl.records && lvl.records.length > 0 ? lvl.records[lvl.records.length - 1].name : "Desconocido"}</strong></p>
-                        <p class="level-points-crate">${puntosNivel} points</p>
-                    </div>
-                `;
-                
-                card.addEventListener("click", () => viewLevelDetail(key));
-                container.appendChild(card);
-            });
-        
         // --- MANEJO DE DETALLE DE NIVEL ---
         function viewLevelDetail(levelKey) {
             var levelData = levelsDatabase[levelKey];
@@ -909,10 +868,7 @@
             return (match && match[2].length == 11) ? match[2] : "NgCIEMdeqXE";
         }
 
-        // --- RENDERIZAR COLA DE ADMINISTRACIÓN CON CLIC REAL DE APROBACIÓN ---
-       // Variable global temporal para guardar el submit seleccionado mientras editas en el modal
-        var activeSubmissionData = null;
-
+        // --- RENDERIZAR COLA DE ADMINISTRACIÓN CON MODAL CONFIGURABLE ---
         function renderAdminQueue(submissions) {
             var queueContainer = document.getElementById("admin-queue-list");
             queueContainer.innerHTML = '<p id="no-submissions-text" style="color: #856404; font-style: italic; margin-top: 15px;">No hay récords pendientes.</p>';
@@ -939,15 +895,13 @@
                     </div>`;
                 queueContainer.appendChild(card);
 
-                // AL DAR CLIC EN APROBAR: Abre el modal de edición
+                // ACCIÓN AL DAR CLIC EN APROBAR
                 document.getElementById(`app-${key}`).addEventListener("click", () => {
                     activeSubmissionData = { key: key, ...rec };
                     
-                    // Rellenar valores sugeridos en el modal
                     document.getElementById("modal-submit-key").value = key;
                     document.getElementById("modal-player-score").value = "100%";
                     
-                    // Si el nivel ya existe en la lista, sugerir los puntos y requisitos que ya tiene
                     var cleanLvlKey = rec.levelName.toLowerCase().replace(/[.#$\[\]]/g, "").trim();
                     if (levelsDatabase[cleanLvlKey]) {
                         document.getElementById("modal-level-points").value = levelsDatabase[cleanLvlKey].points || "350.00";
@@ -957,11 +911,9 @@
                         document.getElementById("modal-level-req").value = "100%";
                     }
 
-                    // Mostrar modal
                     document.getElementById("admin-approve-modal").style.display = "flex";
                 });
 
-                // RECHAZAR SOLICITUD
                 document.getElementById(`rej-${key}`).addEventListener("click", () => {
                     if(confirm("¿Seguro que deseas rechazar este récord?")) {
                         remove(ref(db, 'submissions/' + key));
@@ -970,7 +922,7 @@
             });
         }
 
-        // --- PROCESAR LA CONFIGURACIÓN DEL MODAL AL CONFIRMAR ---
+        // --- PROCESAR CONFIGURACIÓN DEL MODAL ---
         document.getElementById("modal-btn-confirm").addEventListener("click", () => {
             if (!activeSubmissionData) return;
 
@@ -978,12 +930,10 @@
             var cleanLvlKey = rec.levelName.toLowerCase().replace(/[.#$\[\]]/g, "").trim();
             var ytId = getYoutubeId(rec.videoUrl);
 
-            // Valores definidos por ti en el modal
             var puntosAsignados = document.getElementById("modal-level-points").value || "350.00";
             var reqAsignado = document.getElementById("modal-level-req").value || "100%";
             var porcentajeLogrado = document.getElementById("modal-player-score").value || "100%";
 
-            // Estructura del nuevo récord del jugador
             var nuevoRecordJugador = {
                 name: rec.nickname,
                 score: porcentajeLogrado,
@@ -993,25 +943,20 @@
 
             var finalLevelData = {};
 
-            // SI EL NIVEL YA EXISTE: Mantenemos sus datos y añadimos el nuevo jugador al array
             if (levelsDatabase[cleanLvlKey]) {
                 finalLevelData = levelsDatabase[cleanLvlKey];
-                finalLevelData.points = puntosAsignados; // Actualiza puntos por si acaso los cambiaste
-                finalLevelData.scoreRequirement = reqAsignado; // Actualiza requerimiento
+                finalLevelData.points = puntosAsignados; 
+                finalLevelData.scoreRequirement = reqAsignado; 
                 
                 if (!finalLevelData.records) finalLevelData.records = [];
                 
-                // Evitar duplicar al mismo jugador si vuelve a enviar récord
                 var yaExisteJugador = finalLevelData.records.some(r => r.name.toLowerCase() === rec.nickname.toLowerCase());
                 if (!yaExisteJugador) {
                     finalLevelData.records.push(nuevoRecordJugador);
                 } else {
-                    alert("Este jugador ya tiene un récord registrado en este nivel. Se actualizarán sus datos.");
                     finalLevelData.records = finalLevelData.records.map(r => r.name.toLowerCase() === rec.nickname.toLowerCase() ? nuevoRecordJugador : r);
                 }
-            } 
-            // SI EL NIVEL ES NUEVO: Lo creamos desde cero
-            else {
+            } else {
                 finalLevelData = {
                     title: rec.levelName,
                     creator: rec.creatorName || "Desconocido",
@@ -1024,7 +969,6 @@
                 };
             }
 
-            // Guardar en Firebase y limpiar cola
             set(ref(db, 'public_levels/' + cleanLvlKey), finalLevelData).then(() => {
                 return remove(ref(db, 'submissions/' + rec.key));
             }).then(() => {
@@ -1036,41 +980,10 @@
             });
         });
 
-        // BOTÓN CANCELAR DEL MODAL
         document.getElementById("modal-btn-cancel").addEventListener("click", () => {
             document.getElementById("admin-approve-modal").style.display = "none";
             activeSubmissionData = null;
         });
-                // ACCIÓN REAL DE APROBACIÓN EN LA NUBE (CORREGIDA)
-                document.getElementById(`app-${key}`).addEventListener("click", () => {
-                    var cleanLvlKey = rec.levelName.toLowerCase().replace(/[.#$\[\]]/g, "").trim();
-                    var ytId = getYoutubeId(rec.videoUrl);
-
-                    var newPublicLevel = {
-                        title: rec.levelName,
-                        creator: rec.creatorName || "Desconocido",
-                        id: rec.levelId || "N/A",
-                        difficulty: rec.difficulty || "Extreme Demon",
-                        scoreRequirement: "100%",
-                        youtubeId: ytId,
-                        records: [{
-                            name: rec.nickname,
-                            score: "100%",
-                            method: rec.controlMethod,
-                            video: rec.videoUrl
-                        }]
-                    };
-
-                    // Guardar en la sección pública y remover de la cola simultáneamente
-                    set(ref(db, 'public_levels/' + cleanLvlKey), newPublicLevel).then(() => {
-                        return remove(ref(db, 'submissions/' + key));
-                    }).then(() => {
-                        alert(`¡${rec.levelName} aprobado y publicado con éxito!`);
-                    }).catch((error) => {
-                        // Esto te avisará en pantalla si Firebase rechaza la escritura
-                        alert("Error al aprobar: " + error.message);
-                    });
-                });
 
         // --- ASIGNACIÓN DE ESCUCHADORES DE BOTONES ---
         document.getElementById("welcome-view-list-btn").addEventListener("click", () => navigateTo('main'));
@@ -1110,7 +1023,7 @@
             updateLeaderboard();
         });
 
-        // --- ENVIAR RÉCORD ACTUALIZADO ---
+        // --- ENVIAR RÉCORD ---
         document.getElementById("record-submit-form").addEventListener("submit", (e) => {
             e.preventDefault();
             var recordData = {
@@ -1132,13 +1045,12 @@
             });
         });
 
-        // --- CONTROL DE LOGIN Y REGISTRO DIRECTO ---
+        // --- CONTROL DE LOGIN Y REGISTRO ---
         document.getElementById("btn-enviar-register").addEventListener("click", () => {
             var user = document.getElementById("reg-user").value.trim();
             var pass = document.getElementById("reg-pass").value;
             
             if(!user || !pass) { alert("Por favor, llena todos los campos."); return; }
-            
             var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, ""); 
 
             get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
@@ -1158,7 +1070,6 @@
             var pass = document.getElementById("log-pass").value;
 
             if(!user || !pass) { alert("Por favor, llena todos los campos."); return; }
-
             var cleanKey = user.toLowerCase().replace(/[.#$\[\]]/g, "");
 
             get(ref(db, 'users/' + cleanKey)).then((snapshot) => {
