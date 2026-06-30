@@ -393,6 +393,7 @@
 </head>
 <body>
 
+    <!-- 1. PANTALLA DE BIENVENIDA -->
     <div id="welcome-screen">
         <div class="welcome-top">
             <div class="welcome-intro">
@@ -411,6 +412,7 @@
         </div>
     </div>
 
+    <!-- 2. CONTENIDO PRINCIPAL -->
     <div id="main-content">
         
         <div class="header-pointer">
@@ -420,6 +422,7 @@
             </div>
         </div>
 
+        <!-- Barra de Navegación -->
         <div class="navbar-pointer">
             <button id="btn-main" class="nav-btn active">Main List</button>
             <button id="btn-extended" class="nav-btn">Extended List</button>
@@ -431,6 +434,7 @@
             <button id="btn-filters" class="nav-btn filter-trigger">Filtros ⚙️</button>
         </div>
 
+        <!-- Menú de Filtros Desplegable -->
         <div id="filter-menu" class="filter-dropdown">
             <button class="filter-opt-btn selected" id="filter-all-btn">Todos los métodos</button>
             <button class="filter-opt-btn" id="filter-nariz-btn">Nariz 👃</button>
@@ -442,16 +446,13 @@
 
             <div class="center-content-area">
 
+                <!-- CONTENEDOR DINÁMICO PARA EL DETALLE DEL NIVEL -->
                 <div id="level-detail-container" style="display: none; max-width: 1100px; margin: 0 auto;"></div>
 
+                <!-- MAIN LIST (DINÁMICA DESDE FIREBASE) -->
                 <div id="main" class="list-container">
-                    <div class="level-card" data-method="nariz" id="card-poltergeist">
-                        <div class="level-thumbnail"><img src="https://i.ytimg.com/vi/NgCIEMdeqXE/maxresdefault.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:4px;"></div>
-                        <div class="level-content">
-                            <p class="level-title-row"><span class="pos-num">#1</span> - Poltergeist</p>
-                            <p class="level-meta-text">Completado por: <strong>D1amondz57</strong> con Nariz 👃</p>
-                            <p class="level-points-crate">350.00 points</p>
-                        </div>
+                    <div id="main-levels-list">
+                        <!-- Los niveles cargados dinámicamente desde la nube aparecerán aquí -->
                     </div>
                 </div>
 
@@ -465,6 +466,7 @@
                     <p style="text-align: left; color:#657786;">No hay niveles en la Platformer List actualmente.</p>
                 </div>
 
+                <!-- LEADERBOARD -->
                 <div id="leaderboard" class="list-container">
                     <h2 class="leaderboard-title">Geometry Dash Absurd List</h2>
                     <div class="leaderboard-controls">
@@ -492,6 +494,7 @@
                     </div>
                 </div>
 
+                <!-- SUBMIT -->
                 <div id="submit" class="list-container">
                     <div id="auth-required-zone">
                         <div class="auth-box" id="login-box" style="display: block;">
@@ -524,6 +527,18 @@
                                     <input type="text" id="sub-level" placeholder="Ej: Poltergeist" required>
                                 </div>
                                 <div class="form-group">
+                                    <label>Creador del Nivel *</label>
+                                    <input type="text" id="sub-creator" placeholder="Ej: Andromeda" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>ID del Nivel</label>
+                                    <input type="text" id="sub-id" placeholder="Ej: 1123456">
+                                </div>
+                                <div class="form-group">
+                                    <label>Dificultad *</label>
+                                    <input type="text" id="sub-difficulty" placeholder="Ej: Extreme Demon" required>
+                                </div>
+                                <div class="form-group">
                                     <label>¿Cómo se lo pasó? *</label>
                                     <select id="sub-method" required>
                                         <option value="Nariz 👃">Nariz 👃</option>
@@ -542,6 +557,7 @@
                             </form>
                         </div>
 
+                        <!-- PANEL DEL ADMINISTRADOR EXCLUSIVO -->
                         <div class="admin-panel" id="admin-panel-zone">
                             <div class="admin-title">⚙️ Panel del Administrador (Cola de Revisión)</div>
                             <div id="admin-queue-list">
@@ -562,6 +578,7 @@
         </div>
     </div>
 
+    <!-- CONFIGURACIÓN E IMPORTACIÓN INTERNA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -579,13 +596,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        var levelsDatabase = {
-            "poltergeist": {
-                title: "Poltergeist", creator: "Andromeda", id: "1123456", difficulty: "Extreme Demon", 
-                scoreRequirement: "54% - 100%", youtubeId: "NgCIEMdeqXE",
-                records: [{ name: "D1amondz57", score: "100%", method: "Nariz 👃", video: "https://youtu.be/NgCIEMdeqXE" }]
-            }
-        };
+        // Almacenamiento local reflejado de la nube
+        var levelsDatabase = {};
 
         var leaderboardDatabase = {
             "nariz": { "normal": [{ name: "D1amondz57", points: "465.00", country: "Colombia", flag: "🇨🇴" }], "platform": [] },
@@ -596,29 +608,49 @@
         var currentLeaderboardMode = 'normal';
         var loggedInUser = null;
         const ADMIN_USER = "d1amondz57";
-
-        // Variable para guardar la conexión activa a los submits
         var submissionsListener = null;
 
-        // Función para activar la escucha de submits SOLO si eres el admin
-        function listenToSubmissions() {
-            if (loggedInUser && loggedInUser.toLowerCase() === ADMIN_USER) {
-                // Si ya está escuchando, no duplicar
-                if (submissionsListener) return; 
-                
-                const submissionsRef = ref(db, 'submissions');
-                submissionsListener = onValue(submissionsRef, (snapshot) => {
-                    renderAdminQueue(snapshot.val());
-                });
-            } else {
-                // Si no eres tú, se apaga cualquier intento de lectura en segundo plano
-                if (submissionsListener) {
-                    submissionsListener(); // Remueve el escuchador de Firebase
-                    submissionsListener = null;
-                }
-                var queueContainer = document.getElementById("admin-queue-list");
-                if (queueContainer) queueContainer.innerHTML = "";
+        // --- ESCUCHAR NIVELES PÚBLICOS EN LA NUBE ---
+        onValue(ref(db, 'public_levels'), (snapshot) => {
+            levelsDatabase = snapshot.val() || {};
+            renderMainList();
+        });
+
+        // --- RENDERIZAR MAIN LIST DINÁMICAMENTE ---
+        function renderMainList() {
+            var container = document.getElementById("main-levels-list");
+            container.innerHTML = "";
+
+            var keys = Object.keys(levelsDatabase);
+            if (keys.length === 0) {
+                container.innerHTML = `<p style="text-align: left; color:#657786;">No hay niveles verificados públicamente todavía.</p>`;
+                return;
             }
+
+            keys.forEach((key, index) => {
+                var lvl = levelsDatabase[key];
+                // Extraer el ID de video para la miniatura
+                var videoId = lvl.youtubeId || "NgCIEMdeqXE";
+                var cleanMethod = lvl.records[0].method.toLowerCase().includes("nariz") ? "nariz" : "pies";
+
+                var card = document.createElement("div");
+                card.className = "level-card";
+                card.setAttribute("data-method", cleanMethod);
+                card.id = `card-${key}`;
+                card.innerHTML = `
+                    <div class="level-thumbnail">
+                        <img src="https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">
+                    </div>
+                    <div class="level-content">
+                        <p class="level-title-row"><span class="pos-num">#${index + 1}</span> - ${lvl.title}</p>
+                        <p class="level-meta-text">Completado por: <strong>${lvl.records[0].name}</strong> con ${lvl.records[0].method}</p>
+                        <p class="level-points-crate">350.00 points</p>
+                    </div>
+                `;
+                
+                card.addEventListener("click", () => viewLevelDetail(key));
+                container.appendChild(card);
+            });
         }
 
         // --- MANEJO DE DETALLE DE NIVEL ---
@@ -646,9 +678,9 @@
                         <div class="detail-left-column">
                             <div class="video-container"><iframe src="https://www.youtube.com/embed/${levelData.youtubeId}" allowfullscreen></iframe></div>
                             <div class="technical-info-grid">
-                                <div class="tech-item"><div class="tech-label">Level ID</div><div class="tech-value">${levelData.id}</div></div>
+                                <div class="tech-item"><div class="tech-label">Level ID</div><div class="tech-value">${levelData.id || "N/A"}</div></div>
                                 <div class="tech-item"><div class="tech-label">Difficulty</div><div class="tech-value">${levelData.difficulty}</div></div>
-                                <div class="tech-item"><div class="tech-label">Score / Req</div><div class="tech-value score-highlight">${levelData.scoreRequirement}</div></div>
+                                <div class="tech-item"><div class="tech-label">Score / Req</div><div class="tech-value score-highlight">${levelData.scoreRequirement || "100%"}</div></div>
                             </div>
                         </div>
                         <div class="detail-right-column">
@@ -684,7 +716,7 @@
             for (var i = 0; i < filterBtns.length; i++) filterBtns[i].classList.remove("selected");
             document.getElementById(buttonId).classList.add("selected");
 
-            var activeList = document.getElementById(currentActiveTab);
+            var activeList = document.getElementById("main-levels-list");
             if (!activeList) return;
 
             var cards = activeList.getElementsByClassName("level-card");
@@ -740,6 +772,25 @@
             document.getElementById("register-box").style.display = formType === 'register' ? 'block' : 'none';
         }
 
+        // --- COLA DE SUBMITS ADMIN SEGURA ---
+        function listenToSubmissions() {
+            if (loggedInUser && loggedInUser.toLowerCase() === ADMIN_USER) {
+                if (submissionsListener) return; 
+                
+                const submissionsRef = ref(db, 'submissions');
+                submissionsListener = onValue(submissionsRef, (snapshot) => {
+                    renderAdminQueue(snapshot.val());
+                });
+            } else {
+                if (submissionsListener) {
+                    submissionsListener(); 
+                    submissionsListener = null;
+                }
+                var queueContainer = document.getElementById("admin-queue-list");
+                if (queueContainer) queueContainer.innerHTML = "";
+            }
+        }
+
         function checkUserSession() {
             var statusArea = document.getElementById("user-status-area");
             var unlockedZone = document.getElementById("submit-unlocked-zone");
@@ -787,19 +838,27 @@
             });
         }
 
+        // --- EXTRAER ID DE YOUTUBE ---
+        function getYoutubeId(url) {
+            var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = url.match(regExp);
+            return (match && match[2].length == 11) ? match[2] : "NgCIEMdeqXE";
+        }
+
+        // --- RENDERIZAR COLA DE ADMINISTRACIÓN CON CLIC REAL DE APROBACIÓN ---
         function renderAdminQueue(submissions) {
             var queueContainer = document.getElementById("admin-queue-list");
+            
+            // Eliminar tarjetas viejas manteniendo el mensaje por defecto si está vacío
+            queueContainer.innerHTML = '<p id="no-submissions-text" style="color: #856404; font-style: italic; margin-top: 15px;">No hay récords pendientes.</p>';
             var noSubText = document.getElementById("no-submissions-text");
             
             if (!submissions) { 
                 noSubText.style.display = "block"; 
-                queueContainer.innerHTML = ""; 
-                queueContainer.appendChild(noSubText); 
                 return; 
             }
             
             noSubText.style.display = "none"; 
-            queueContainer.innerHTML = "";
             
             Object.keys(submissions).forEach(function(key) {
                 var rec = submissions[key];
@@ -807,20 +866,45 @@
                 card.className = "pending-card";
                 card.innerHTML = `
                     <div><strong>Jugador:</strong> ${rec.nickname} | <strong>Nivel:</strong> ${rec.levelName}</div>
+                    <div><strong>Creador:</strong> ${rec.creatorName || "Desconocido"} | <strong>Dificultad:</strong> ${rec.difficulty || "N/A"}</div>
                     <div><strong>Método:</strong> ${rec.controlMethod} | <a href="${rec.videoUrl}" target="_blank">Ver Prueba</a></div>
                     <div style="font-size:0.85rem; color:#666; margin-top:5px;"><em>"${rec.userComment}"</em></div>
                     <div class="pending-actions">
-                        <button class="action-btn approve-btn" id="app-${key}">Aprobar</button>
+                        <button class="action-btn approve-btn" id="app-${key}">Aprobar Definitivamente</button>
                         <button class="action-btn reject-btn" id="rej-${key}">Rechazar</button>
                     </div>`;
                 queueContainer.appendChild(card);
 
+                // ACCIÓN REAL DE APROBACIÓN EN LA NUBE
                 document.getElementById(`app-${key}`).addEventListener("click", () => {
-                    alert("Aprobado de forma simulada.");
-                    remove(ref(db, 'submissions/' + key));
+                    var cleanLvlKey = rec.levelName.toLowerCase().replace(/[.#$\[\]]/g, "").trim();
+                    var ytId = getYoutubeId(rec.videoUrl);
+
+                    var newPublicLevel = {
+                        title: rec.levelName,
+                        creator: rec.creatorName || "Desconocido",
+                        id: rec.levelId || "N/A",
+                        difficulty: rec.difficulty || "Extreme Demon",
+                        scoreRequirement: "100%",
+                        youtubeId: ytId,
+                        records: [{
+                            name: rec.nickname,
+                            score: "100%",
+                            method: rec.controlMethod,
+                            video: rec.videoUrl
+                        }]
+                    };
+
+                    // Guardar en la sección pública y remover de la cola simultáneamente
+                    set(ref(db, 'public_levels/' + cleanLvlKey), newPublicLevel).then(() => {
+                        remove(ref(db, 'submissions/' + key));
+                        alert(`¡${rec.levelName} aprobado y publicado con éxito!`);
+                    });
                 });
+
                 document.getElementById(`rej-${key}`).addEventListener("click", () => {
                     remove(ref(db, 'submissions/' + key));
+                    alert("Récord rechazado y eliminado de la cola.");
                 });
             });
         }
@@ -847,8 +931,6 @@
         document.getElementById("link-to-register").addEventListener("click", () => toggleAuthForms('register'));
         document.getElementById("link-to-login").addEventListener("click", () => toggleAuthForms('login'));
 
-        document.getElementById("card-poltergeist").addEventListener("click", () => viewLevelDetail('poltergeist'));
-
         document.getElementById("leaderboard-method-select").addEventListener("change", updateLeaderboard);
         document.getElementById("leaderboard-search-input").addEventListener("input", updateLeaderboard);
         
@@ -865,12 +947,15 @@
             updateLeaderboard();
         });
 
-        // --- ENVIAR RÉCORD ---
+        // --- ENVIAR RÉCORD ACTUALIZADO ---
         document.getElementById("record-submit-form").addEventListener("submit", (e) => {
             e.preventDefault();
             var recordData = {
                 nickname: loggedInUser,
                 levelName: document.getElementById("sub-level").value,
+                creatorName: document.getElementById("sub-creator").value,
+                levelId: document.getElementById("sub-id").value || "N/A",
+                difficulty: document.getElementById("sub-difficulty").value,
                 controlMethod: document.getElementById("sub-method").value,
                 videoUrl: document.getElementById("sub-video").value,
                 userComment: document.getElementById("sub-comment").value || "Sin comentarios.",
@@ -920,7 +1005,7 @@
                         loggedInUser = account.username;
                         checkUserSession();
                         alert("¡Sesión iniciada con éxito!");
-                        navigateTo('main'); // Te redirige automáticamente a la lista al loguearte
+                        navigateTo('main'); 
                     } else {
                         alert("Contraseña incorrecta.");
                     }
